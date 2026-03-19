@@ -50,18 +50,18 @@ rownames(pbmc_meta) <- pbmc_meta$Sample
 pbmc <- as.data.frame(pbmc_matrix)
 pbmc <- t(pbmc)
 
-Map3k6_matrix <- as.data.frame(pbmc)
-Map3k6_matrix <- cbind(rownames(Map3k6_matrix), Map3k6_matrix$Map3k6) %>% as.data.frame()
+Tcta_matrix <- as.data.frame(pbmc)
+Tcta_matrix <- cbind(rownames(Tcta_matrix), Tcta_matrix$Tcta) %>% as.data.frame()
 
-colnames(Map3k6_matrix) <- c('ID','Map3k6')
-Map3k6_matrix$Group <- pbmc_meta$subtype
-Map3k6_matrix$Map3k6 <- as.numeric(Map3k6_matrix$Map3k6)
+colnames(Tcta_matrix) <- c('ID','Tcta')
+Tcta_matrix$Group <- pbmc_meta$subtype
+Tcta_matrix$Tcta <- as.numeric(Tcta_matrix$Tcta)
 ################################ Liner
-newdata <- Map3k6_matrix
+newdata <- Tcta_matrix
 ko_color <- c('#3d4144', '#28aae2', '#1fb573', '#800040')
 newdata$Group <- factor(newdata$Group, levels = c('SHAM','TAC','ART','ASIV80'))
 my_comparisons <- list(c("ASIV80", "SHAM"),c("ASIV80", "TAC"),c("ASIV80", "ART"))
-a <- ggboxplot(newdata, x="Group", y="Map3k6", fill = "Group",
+a <- ggboxplot(newdata, x="Group", y="Tcta", fill = "Group",
             ylab="Transcripts Per Million (TMP)",add = "jitter", shape = 16,xlab="",bxp.errorbar = TRUE,outlier.shape = NA)
 a <- a + theme_bw() + rotate_x_text(51) + scale_fill_manual(values = ko_color)
 a <- a + stat_compare_means(comparisons = my_comparisons, symnum.args=list(cutpoints = c(0,0.001,0.01,0.05, 1), symbols = c("***", "**","*", "ns")),
@@ -70,7 +70,7 @@ a
 #a <- a + stat_compare_means() + NoLegend()
 
 setwd('G:\\WuXiang\\Experiment\\LOG')
-pdf(file = 'Map3k6_compare.pdf', width = 2.7, height = 2.95)
+pdf(file = 'Tcta_compare.pdf', width = 2.7, height = 2.95)
 a
 dev.off()
 
