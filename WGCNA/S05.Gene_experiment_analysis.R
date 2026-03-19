@@ -50,18 +50,18 @@ rownames(pbmc_meta) <- pbmc_meta$Sample
 pbmc <- as.data.frame(pbmc_matrix)
 pbmc <- t(pbmc)
 
-Tcta_matrix <- as.data.frame(pbmc)
-Tcta_matrix <- cbind(rownames(Tcta_matrix), Tcta_matrix$Tcta) %>% as.data.frame()
+Mki67_matrix <- as.data.frame(pbmc)
+Mki67_matrix <- cbind(rownames(Mki67_matrix), Mki67_matrix$Mki67) %>% as.data.frame()
 
-colnames(Tcta_matrix) <- c('ID','Tcta')
-Tcta_matrix$Group <- pbmc_meta$subtype
-Tcta_matrix$Tcta <- as.numeric(Tcta_matrix$Tcta)
+colnames(Mki67_matrix) <- c('ID','Mki67')
+Mki67_matrix$Group <- pbmc_meta$subtype
+Mki67_matrix$Mki67 <- as.numeric(Mki67_matrix$Mki67)
 ################################ Liner
-newdata <- Tcta_matrix
+newdata <- Mki67_matrix
 ko_color <- c('#3d4144', '#28aae2', '#1fb573', '#800040')
 newdata$Group <- factor(newdata$Group, levels = c('SHAM','TAC','ART','ASIV80'))
 my_comparisons <- list(c("ASIV80", "SHAM"),c("ASIV80", "TAC"),c("ASIV80", "ART"))
-a <- ggboxplot(newdata, x="Group", y="Tcta", fill = "Group",
+a <- ggboxplot(newdata, x="Group", y="Mki67", fill = "Group",
             ylab="Transcripts Per Million (TMP)",add = "jitter", shape = 16,xlab="",bxp.errorbar = TRUE,outlier.shape = NA)
 a <- a + theme_bw() + rotate_x_text(51) + scale_fill_manual(values = ko_color)
 a <- a + stat_compare_means(comparisons = my_comparisons, symnum.args=list(cutpoints = c(0,0.001,0.01,0.05, 1), symbols = c("***", "**","*", "ns")),
@@ -70,7 +70,7 @@ a
 #a <- a + stat_compare_means() + NoLegend()
 
 setwd('G:\\WuXiang\\Experiment\\LOG')
-pdf(file = 'Tcta_compare.pdf', width = 2.7, height = 2.95)
+pdf(file = 'Mki67_compare.pdf', width = 2.7, height = 2.95)
 a
 dev.off()
 
