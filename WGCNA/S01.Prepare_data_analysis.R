@@ -78,8 +78,8 @@ dev.off()
 net = blockwiseModules(
 				 datExpr,
 				 power = sft$powerEstimate,
-				 maxBlockSize = 6000,
-				 TOMType = "unsigned", minModuleSize = 30,
+				 maxBlockSize = 5000,
+				 TOMType = "unsigned", #minModuleSize = 50,
 				 reassignThreshold = 0, mergeCutHeight = 0.25,
 				 numericLabels = TRUE, pamRespectsDendro = FALSE,
 				 saveTOMs = F, 
@@ -92,7 +92,7 @@ net = blockwiseModules(
 mergedColors = labels2colors(net$colors)
 table(mergedColors)
 # Plot the dendrogram and the module colors underneath
-pdf(file="./Cluster_Dendrogram.pdf",width = 5.2, height = 3.45)
+pdf(file="./Cluster_Dendrogram.pdf",width = 4.5, height = 3.25)
 plotDendroAndColors(net$dendrograms[[1]], mergedColors[net$blockGenes[[1]]],
                     "Module colors",
                     dendroLabels = FALSE, hang = 0.03,
@@ -104,7 +104,7 @@ nSamples = nrow(datExpr)
 #首先针对样本做个系统聚类树
 datExpr_tree<-hclust(dist(datExpr), method = "average")
 
-pdf(file="./Trait_heatmap.pdf",width = 4.95, height = 4.05)
+pdf(file="./Trait_heatmap.pdf",width = 5.6, height = 3.6)
 par(mar = c(0,5,2,0))
 plot(datExpr_tree, main = "Sample clustering", sub="", xlab="", cex.lab = 2, 
      cex.axis = 1, cex.main = 1,cex.lab=1)
@@ -126,7 +126,7 @@ plotDendroAndColors(datExpr_tree, sample_colors,
 dev.off()
 
 ##################### step5:模块和性状的关系
-datTraits$subtype <- factor(datTraits$subtype, levels = c('DMSO','Decitabin','GSK126','DandG'))
+datTraits$subtype <- factor(datTraits$subtype, levels = c('SHAM','TAC','ART','ASIV80'))
 if(T){
   nGenes = ncol(datExpr)
   nSamples = nrow(datExpr)
@@ -144,7 +144,7 @@ if(T){
   textMatrix = paste(signif(moduleTraitCor, 2), "\n(",
                      signif(moduleTraitPvalue, 1), ")", sep = "");
   dim(textMatrix) = dim(moduleTraitCor)
-  pdf(file="./step5-Module-trait-relationships.pdf",width = 6, height = 12)
+  pdf(file="./step5-Module-trait-relationships.pdf",width = 6, height = 14)
   #png("step5-Module-trait-relationships.png",width = 800,height = 1200,res = 120)
   par(mar = c(6, 8.5, 3, 3));
   # Display the correlation values within a heatmap plot
@@ -165,7 +165,7 @@ if(T){
   # 还可以是条形图,但是只能是指定某个形状
   # 或者自己循环一下批量出图。
   Luminal = as.data.frame(design[,4]);
-  names(Luminal) = "DandG"
+  names(Luminal) = "ASIV80"
   y=Luminal
   GS1=as.numeric(cor(y,datExpr, use="p"))
   GeneSignificance=abs(GS1)
@@ -194,14 +194,14 @@ names(MMPvalue) = paste("p.MM", modNames, sep="");
 ## 只有连续型性状才能只有计算
 ## 这里把是否属于 Luminal 表型这个变量用0,1进行数值化。
 Luminal = as.data.frame(design[,4]);
-names(Luminal) = "DandG"
+names(Luminal) = "ASIV80"
 geneTraitSignificance = as.data.frame(cor(datExpr, Luminal, use = "p"));
 GSPvalue = as.data.frame(corPvalueStudent(as.matrix(geneTraitSignificance), nSamples));
 names(geneTraitSignificance) = paste("GS.", names(Luminal), sep="");
 names(GSPvalue) = paste("p.GS.", names(Luminal), sep="");
 
 ############################ 两个相关性矩阵联合起来,指定感兴趣模块进行分析
-module = "turquoise"
+module = "pink"
 column = match(module, modNames);
 moduleGenes = moduleColors==module;
 sizeGrWindow(7, 7);
@@ -209,12 +209,12 @@ par(mfrow = c(1,1));
 verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
                    abs(geneTraitSignificance[moduleGenes, 1]),
                    xlab = paste("Module Membership in", module, "module"),
-                   ylab = "Gene significance for DandG",
+                   ylab = "Gene significance for ASIV80",
                    main = paste("Module membership vs. gene significance\n"),
                    cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = module)
 
-pdf(file="./turquoise_module.pdf",width = 4.55, height = 4.05)
-module = "turquoise"
+pdf(file="./pink_module.pdf",width = 4.85, height = 4)
+module = "pink"
 column = match(module, modNames);
 moduleGenes = moduleColors==module;
 sizeGrWindow(7, 7);
@@ -222,12 +222,12 @@ par(mfrow = c(1,1));
 verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
                    abs(geneTraitSignificance[moduleGenes, 1]),
                    xlab = paste("Module Membership in", module, "module"),
-                   ylab = "Gene significance for DandG",
+                   ylab = "Gene significance for ASIV80",
                    main = paste("Module membership vs. gene significance\n"),
                    cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = module)
 dev.off()
 ############################ 两个相关性矩阵联合起来,指定感兴趣模块进行分析
-module = "black"
+module = "skyblue"
 column = match(module, modNames);
 moduleGenes = moduleColors==module;
 sizeGrWindow(7, 7);
@@ -235,10 +235,23 @@ par(mfrow = c(1,1));
 verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
                    abs(geneTraitSignificance[moduleGenes, 1]),
                    xlab = paste("Module Membership in", module, "module"),
-                   ylab = "Gene significance for DandG",
+                   ylab = "Gene significance for ASIV80",
                    main = paste("Module membership vs. gene significance\n"),
                    cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = module)
 
+pdf(file="./skyblue_module.pdf",width = 4.85, height = 4)
+module = "skyblue"
+column = match(module, modNames);
+moduleGenes = moduleColors==module;
+sizeGrWindow(7, 7);
+par(mfrow = c(1,1));
+verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
+                   abs(geneTraitSignificance[moduleGenes, 1]),
+                   xlab = paste("Module Membership in", module, "module"),
+                   ylab = "Gene significance for ASIV80",
+                   main = paste("Module membership vs. gene significance\n"),
+                   cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = module)
+dev.off()
 ############################ 两个相关性矩阵联合起来,指定感兴趣模块进行分析
 module = "pink"
 column = match(module, modNames);
@@ -287,15 +300,15 @@ if(T){
   MEs = moduleEigengenes(datExpr, moduleColors)$eigengenes
   ## 只有连续型性状才能只有计算
   ## 这里把是否属 Luminal 表型这个变量0,1进行数值化
-  Luminal = as.data.frame(design[,1]);
-  names(Luminal) = "Infect-Early"
+  Luminal = as.data.frame(design[,4]);
+  names(Luminal) = "ASIV80"
   # Add the weight to existing module eigengenes
   MET = orderMEs(cbind(MEs, Luminal))
   # Plot the relationships among the eigengenes and the trait
   sizeGrWindow(5,7.5);
   
   par(cex = 0.9)
-  png("step7-Eigengene-dendrogram.png",width = 800,height = 600)
+  pdf("step7-Eigengene-dendrogram.pdf",width = 8,height = 6)
   plotEigengeneNetworks(MET, "", marDendro = c(0,4,1,2), marHeatmap = c(3,4,1,2), cex.lab = 0.8, xLabelsAngle
                         = 90)
   dev.off()
@@ -342,7 +355,7 @@ MEs = moduleEigengenes(datExpr, moduleColors)$eigengenes
 ## 只有连续型性状才能只有计算
 ## 这里把是否属于 Luminal 表型这个变量用0,1进行数值化。
 Luminal = as.data.frame(design[,4]);
-names(Luminal) = "DandG"
+names(Luminal) = "ASIV80"
 # Add the weight to existing module eigengenes
 MET = orderMEs(cbind(MEs, Luminal))
 # Plot the relationships among the eigengenes and the trait
@@ -369,7 +382,7 @@ plotEigengeneNetworks(MET, "Eigengene adjacency heatmap", marHeatmap = c(3,4,2,2
 # 主要是关心具体某个模块内部的基因
 if(T){
   # Select module
-  module = "black";
+  module = "pink";
   # Select module probes
   probes = colnames(datExpr) ## 我们例子里面的probe就是基因
   inModule = (moduleColors==module);
@@ -377,7 +390,7 @@ if(T){
   head(modProbes)
   
   # 如果使用WGCNA包自带的热图就很丑。
-  which.module="black";
+  which.module="pink";
   dat=datExpr[,moduleColors==which.module ] 
   plotMat(t(scale(dat)),nrgcols=30,rlabels=T,
           clabels=T,rcols=which.module,
@@ -394,7 +407,7 @@ if(T){
   group_list=datTraits$subtype
   ac=data.frame(g=group_list)
   rownames(ac)=colnames(n) 
-  pheatmap(n,show_colnames =F,show_rownames = F,
+  pheatmap(n,show_colnames =F,show_rownames = F,cluster_cols = FALSE,
            annotation_col=ac )
   # 可以很清晰的看到，所有的形状相关的模块基因
   # 其实未必就不是差异表达基因。
@@ -403,7 +416,7 @@ if(T){
 ############################################# 
 if(T){
   # Select module
-  module = "turquoise";
+  module = "skyblue";
   # Select module probes
   probes = colnames(datExpr) ## 我们例子里面的probe就是基因
   inModule = (moduleColors==module);
@@ -411,7 +424,7 @@ if(T){
   head(modProbes)
   
   # 如果使用WGCNA包自带的热图就很丑。
-  which.module="turquoise";
+  which.module="skyblue";
   dat=datExpr[,moduleColors==which.module ] 
   plotMat(t(scale(dat)),nrgcols=30,rlabels=T,
           clabels=T,rcols=which.module,
@@ -428,14 +441,14 @@ if(T){
   group_list=datTraits$subtype
   ac=data.frame(g=group_list)
   rownames(ac)=colnames(n) 
-  pheatmap(n,show_colnames =F,show_rownames = F,
+  pheatmap(n,show_colnames =F,show_rownames = F,cluster_cols = FALSE,
            annotation_col=ac )
   # 可以很清晰的看到，所有的形状相关的模块基因
   # 其实未必就不是差异表达基因。
 }
 
 pdf(file="./turquoise_heatmap.pdf",width = 4.95, height = 4.5)
-pheatmap(n,show_colnames =F,show_rownames = F,
+pheatmap(n,show_colnames =F,show_rownames = F,cluster_cols = FALSE,
            annotation_col=ac )
 dev.off()
 
@@ -477,7 +490,7 @@ if(T){
 # Recalculate topological overlap
 TOM = TOMsimilarityFromExpr(datExpr, power = 6); 
 # Select module
-module = "turquoise";
+module = "pink";
 # Select module probes
 probes = colnames(datExpr) ## 我们例子里面的probe就是基因名
 inModule = (moduleColors==module);
@@ -512,34 +525,4 @@ abc <- cbind(colnames(datExpr[, modProbes]),IMConn) %>% as.data.frame()
 colnames(abc)[1] <- 'Gene'
 abc$IMConn <- as.numeric(abc$IMConn)
 write.csv(abc, file = 'IMConn_rank.csv',row.names = FALSE)
-########################################### Venn interact
-Interact_list <- read.csv('G:\\WuXiang\\Experiment\\Chip-seq\\Intersect.csv')
-Interact_list <- as.character(Interact_list$Genes)
-final_list <- abc[abc$Gene %in% Interact_list,]
-write.csv(final_list, file = 'final_list.csv', row.names = FALSE)
-## step 8 
-# Only Key genes across samples
-if(T){
-  Key_gene_list <- c('ARRB2','B3GALT5','B4GALT6','BCL11A','CLGN','COTL1','ENSBTAG00000016794','ENSBTAG00000026792','EPHX4','FCRL1','ITPR1','MREG','MTSS1','SEC31A','SLC9A7',
-		     'ST6GAL1','SYK','WNT7A')
-  
-  # 如果使用WGCNA包自带的热图就很丑。
-  dat=datExpr[,Key_gene_list] 
-  library(pheatmap)
-  pheatmap(t(scale(dat)) ,show_colnames =F,show_rownames = F,annotation_col=ac) #对那些提取出来的1000个基因所在的每一行取出，组合起来为一个新的表达矩阵
-  n=t(scale(t(log(dat+1)))) # 'scale'可以对log-ratio数值进行归一化
-  n[n>2]=2 
-  n[n< -2]= -2
-  n[1:4,1:4]
-  pheatmap(n,show_colnames =F,show_rownames = F)
-  group_list=datTraits$Infect_time
-  ac=data.frame(Phenotype=group_list)
-  rownames(ac)=rownames(n) 
-  pheatmap(t(scale(dat)) ,show_colnames =F,show_rownames = F,annotation_col=ac)
-  # 可以很清晰的看到，所有的形状相关的模块基因
-  # 其实未必就不是差异表达基因。
-}
 
-pdf(file="./Heatmap_genes_plot.pdf",width=6.7,height=4.15)
-pheatmap(t(scale(dat)) ,show_colnames =F,show_rownames = TRUE,annotation_col=ac)
-dev.off()
