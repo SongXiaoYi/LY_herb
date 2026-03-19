@@ -106,6 +106,7 @@ save_enrichment <- function(result_df, output_path) {
 gmt_file <- "./c2.cp.v2026.1.Hs.symbols.gmt"  # 替换为你的GMT文件路径
 gmt_file <- "./c2.cp.reactome.v2026.1.Hs.symbols.gmt"  # 替换为你的GMT文件路径
 gmt_file <- "./c2.cp.wikipathways.v2026.1.Hs.symbols.gmt"  # 替换为你的GMT文件路径
+gmt_file <- "./MAP3K6_hypertension_heart.gmt"
 #output_file <- "enrichment_results_R.csv"  # 输出结果路径
 
 # 2. 待富集的基因列表（替换为你的目标基因集）
