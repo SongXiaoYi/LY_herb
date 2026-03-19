@@ -23,6 +23,7 @@ library(reshape2)
 library('org.Mm.eg.db')
 library('clusterProfiler')
 ######################################
+'%!in%' <- Negate('%in%')
 #####################################################
 setwd('E:\\CQT2026012704-F001_20260313\\CQT2026012704-F001_20260313\\Experiment\\WGCNA')
 pbmc <- read.csv('./TPM.gene.csv')
@@ -46,6 +47,8 @@ pbmc_matrix <- normalizeBetweenArrays(pbmc_matrix)
 pbmc_meta <- read.csv('./WGCNA_meta.csv')
 rownames(pbmc_meta) <- pbmc_meta$Sample
 
+pbmc_meta <- pbmc_meta[pbmc_meta$subtype != 'ART',]
+pbmc_matrix <- pbmc_matrix[,pbmc_meta$Sample]
 ######################################################## data expression
 fpkm <- t(pbmc_matrix)                    
 datExpr <- fpkm
@@ -126,7 +129,7 @@ plotDendroAndColors(datExpr_tree, sample_colors,
 dev.off()
 
 ##################### step5:模块和性状的关系
-datTraits$subtype <- factor(datTraits$subtype, levels = c('SHAM','TAC','ART','ASIV80'))
+datTraits$subtype <- factor(datTraits$subtype, levels = c('SHAM','TAC','ASIV80'))
 if(T){
   nGenes = ncol(datExpr)
   nSamples = nrow(datExpr)
@@ -144,7 +147,7 @@ if(T){
   textMatrix = paste(signif(moduleTraitCor, 2), "\n(",
                      signif(moduleTraitPvalue, 1), ")", sep = "");
   dim(textMatrix) = dim(moduleTraitCor)
-  pdf(file="./step5-Module-trait-relationships.pdf",width = 6, height = 14)
+  pdf(file="./step5-Module-trait-relationships2.pdf",width = 6, height = 14)
   #png("step5-Module-trait-relationships.png",width = 800,height = 1200,res = 120)
   par(mar = c(6, 8.5, 3, 3));
   # Display the correlation values within a heatmap plot
@@ -164,7 +167,7 @@ if(T){
   # 除了上面的热图展现形状与基因模块的相关性外
   # 还可以是条形图,但是只能是指定某个形状
   # 或者自己循环一下批量出图。
-  Luminal = as.data.frame(design[,4]);
+  Luminal = as.data.frame(design[,3]);
   names(Luminal) = "ASIV80"
   y=Luminal
   GS1=as.numeric(cor(y,datExpr, use="p"))
@@ -193,7 +196,7 @@ names(MMPvalue) = paste("p.MM", modNames, sep="");
 
 ## 只有连续型性状才能只有计算
 ## 这里把是否属于 Luminal 表型这个变量用0,1进行数值化。
-Luminal = as.data.frame(design[,4]);
+Luminal = as.data.frame(design[,3]);
 names(Luminal) = "ASIV80"
 geneTraitSignificance = as.data.frame(cor(datExpr, Luminal, use = "p"));
 GSPvalue = as.data.frame(corPvalueStudent(as.matrix(geneTraitSignificance), nSamples));
@@ -201,7 +204,7 @@ names(geneTraitSignificance) = paste("GS.", names(Luminal), sep="");
 names(GSPvalue) = paste("p.GS.", names(Luminal), sep="");
 
 ############################ 两个相关性矩阵联合起来,指定感兴趣模块进行分析
-module = "pink"
+module = "darkturquoise"
 column = match(module, modNames);
 moduleGenes = moduleColors==module;
 sizeGrWindow(7, 7);
@@ -214,7 +217,7 @@ verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
                    cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = module)
 
 pdf(file="./pink_module.pdf",width = 4.85, height = 4)
-module = "pink"
+module = "darkturquoise"
 column = match(module, modNames);
 moduleGenes = moduleColors==module;
 sizeGrWindow(7, 7);
@@ -300,7 +303,7 @@ if(T){
   MEs = moduleEigengenes(datExpr, moduleColors)$eigengenes
   ## 只有连续型性状才能只有计算
   ## 这里把是否属 Luminal 表型这个变量0,1进行数值化
-  Luminal = as.data.frame(design[,4]);
+  Luminal = as.data.frame(design[,3]);
   names(Luminal) = "ASIV80"
   # Add the weight to existing module eigengenes
   MET = orderMEs(cbind(MEs, Luminal))
@@ -382,7 +385,7 @@ plotEigengeneNetworks(MET, "Eigengene adjacency heatmap", marHeatmap = c(3,4,2,2
 # 主要是关心具体某个模块内部的基因
 if(T){
   # Select module
-  module = "pink";
+  module = "darkturquoise";
   # Select module probes
   probes = colnames(datExpr) ## 我们例子里面的probe就是基因
   inModule = (moduleColors==module);
@@ -455,7 +458,7 @@ dev.off()
 ############################################# 
 if(T){
   # Select module
-  module = "pink";
+  module = "darkturquoise";
   # Select module probes
   probes = colnames(datExpr) ## 我们例子里面的probe就是基因
   inModule = (moduleColors==module);
@@ -524,5 +527,5 @@ filter <- modTOM[top, top]
 abc <- cbind(colnames(datExpr[, modProbes]),IMConn) %>% as.data.frame()
 colnames(abc)[1] <- 'Gene'
 abc$IMConn <- as.numeric(abc$IMConn)
-write.csv(abc, file = 'IMConn_rank.csv',row.names = FALSE)
+write.csv(abc, file = 'IMConn_rank2.csv',row.names = FALSE)
 
