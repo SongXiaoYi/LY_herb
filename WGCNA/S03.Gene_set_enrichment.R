@@ -73,7 +73,7 @@ gmt_enrichment <- function(query_genes,
 
   ABC <- stack(gmt_dict)
   ABC <- ABC[,c(2,1)]
-  colnames(Plot_GeneSet) <- c('term','gene')
+  colnames(ABC) <- c('term','gene')
   # 执行富集分析（超几何检验）
   enrich_result <- enricher(
     gene = query_genes,
