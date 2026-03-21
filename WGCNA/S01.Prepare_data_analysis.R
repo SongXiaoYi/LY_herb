@@ -175,12 +175,13 @@ if(T){
   # Next module significance is defined as average gene significance.
   ModuleSignificance=tapply(GeneSignificance,
                             moduleColors, mean, na.rm=T)
+  pdf(file="./step5-Module-trait-important.pdf",width = 7.1, height = 4)
   sizeGrWindow(8,7)
   par(mfrow = c(1,1))
   # 如果模块太多，下面的展示就不友好
   # 不过，我们可以自定义出图。
   plotModuleSignificance(GeneSignificance,moduleColors)
-  
+  dev.off()
 }
 
 #### step6:感兴趣性状的模块的具体基因分析
@@ -216,7 +217,7 @@ verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
                    main = paste("Module membership vs. gene significance\n"),
                    cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = module)
 
-pdf(file="./pink_module.pdf",width = 4.85, height = 4)
+pdf(file="./darkturquoise_module.pdf",width = 4.85, height = 4)
 module = "darkturquoise"
 column = match(module, modNames);
 moduleGenes = moduleColors==module;
@@ -230,7 +231,7 @@ verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
                    cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = module)
 dev.off()
 ############################ 两个相关性矩阵联合起来,指定感兴趣模块进行分析
-module = "skyblue"
+module = "skyblue3"
 column = match(module, modNames);
 moduleGenes = moduleColors==module;
 sizeGrWindow(7, 7);
@@ -243,7 +244,7 @@ verboseScatterplot(abs(geneModuleMembership[moduleGenes, column]),
                    cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = module)
 
 pdf(file="./skyblue_module.pdf",width = 4.85, height = 4)
-module = "skyblue"
+module = "skyblue3"
 column = match(module, modNames);
 moduleGenes = moduleColors==module;
 sizeGrWindow(7, 7);
@@ -328,7 +329,7 @@ if(T){
   par(cex = 1.0)
   ## 性状与模块热
   
-  png("step7-Eigengene-adjacency-heatmap.png",width = 800,height = 600)
+  pdf("step7-Eigengene-adjacency-heatmap.pdf",width = 800,height = 600)
   plotEigengeneNetworks(MET, "Eigengene adjacency heatmap", marHeatmap = c(3,4,2,2),
                         plotDendrograms = FALSE, xLabelsAngle = 90)
   dev.off()
@@ -357,7 +358,7 @@ TOMplot(plotDiss, selectTree, selectColors, main = "Network heatmap plot, select
 MEs = moduleEigengenes(datExpr, moduleColors)$eigengenes
 ## 只有连续型性状才能只有计算
 ## 这里把是否属于 Luminal 表型这个变量用0,1进行数值化。
-Luminal = as.data.frame(design[,4]);
+Luminal = as.data.frame(design[,3]);
 names(Luminal) = "ASIV80"
 # Add the weight to existing module eigengenes
 MET = orderMEs(cbind(MEs, Luminal))
@@ -393,7 +394,7 @@ if(T){
   head(modProbes)
   
   # 如果使用WGCNA包自带的热图就很丑。
-  which.module="pink";
+  which.module="darkturquoise";
   dat=datExpr[,moduleColors==which.module ] 
   plotMat(t(scale(dat)),nrgcols=30,rlabels=T,
           clabels=T,rcols=which.module,
@@ -410,8 +411,10 @@ if(T){
   group_list=datTraits$subtype
   ac=data.frame(g=group_list)
   rownames(ac)=colnames(n) 
+  pdf(file="./Genes in the module.pdf",width = 4.8, height = 4.4)
   pheatmap(n,show_colnames =F,show_rownames = F,cluster_cols = FALSE,
            annotation_col=ac )
+  dev.off()
   # 可以很清晰的看到，所有的形状相关的模块基因
   # 其实未必就不是差异表达基因。
 }
@@ -493,7 +496,7 @@ if(T){
 # Recalculate topological overlap
 TOM = TOMsimilarityFromExpr(datExpr, power = 6); 
 # Select module
-module = "pink";
+module = "darkturquoise";
 # Select module probes
 probes = colnames(datExpr) ## 我们例子里面的probe就是基因名
 inModule = (moduleColors==module);
@@ -507,7 +510,7 @@ dimnames(modTOM) = list(modProbes, modProbes)
 vis = exportNetworkToVisANT(modTOM,
 file = paste("VisANTInput-", module, ".txt", sep=""),
 weighted = TRUE,
-threshold = 0)
+threshold = 0
 
 cyt = exportNetworkToCytoscape(
     modTOM,
