@@ -27,7 +27,7 @@ library(org.Hs.eg.db)
 library(GSEAtopics)
 #####################################
 setwd('E:\\CQT2026012704-F001_20260313\\CQT2026012704-F001_20260313\\Experiment\\WGCNA')
-Genelist <- read.csv('./IMConn_rank.csv')
+Genelist <- read.csv('./IMConn_rank2.csv')
 Genelist <- Genelist$Gene
 TurnGenelist <- mouse2human(Genelist)
 ##################################
@@ -140,7 +140,7 @@ if (nrow(enrich_result) > 0) {
   if (require("ggplot2")) {
     # 取前20个通路绘图
     plot_data <- head(enrich_result, 20)
-    ggplot(plot_data, aes(x = Fold_Enrichment, y = reorder(Description, Fold_Enrichment))) +
+    ggplot(plot_data, aes(x = FoldEnrichment, y = reorder(Description, FoldEnrichment))) +
       geom_point(aes(size = Count, color = p.adjust)) +
       scale_color_gradient(low = "red", high = "blue") +
       labs(x = "Fold Enrichment", y = "Pathway", size = "Gene Count", color = "Adjusted P-value") +
@@ -151,7 +151,14 @@ if (nrow(enrich_result) > 0) {
   }
 }
 
-
+pdf(file = 'Allpathways_compare.pdf', width = 10, height = 4.1)
+ggplot(plot_data, aes(x = FoldEnrichment, y = reorder(Description, FoldEnrichment))) +
+    geom_point(aes(size = Count, color = p.adjust)) +
+    scale_color_gradient(low = "red", high = "blue") +
+    labs(x = "Fold Enrichment", y = "Pathway", size = "Gene Count", color = "Adjusted P-value") +
+    theme_bw() +
+    theme(axis.text.y = element_text(size = 8)) + ylab('')
+dev.off()
 
 
 
