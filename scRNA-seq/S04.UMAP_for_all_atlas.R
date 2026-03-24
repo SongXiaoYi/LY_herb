@@ -12,7 +12,7 @@ library(plot1cell)
 
 #### load_data
 setwd('E:\\CQT2026012704-F001_20260313\\CQT2026012704-F001_20260313\\Experiment\\GEO\\Data\\GSE247468')
-pbmc <- readRDS('./data_preparation.rds')
+pbmc <- readRDS('./pbmc.rds')
 DimPlot(pbmc, reduction = "umap", pt.size = 0.1,label = TRUE,label.size = 6) + NoLegend()
 
 ################### Annotation conduct
@@ -308,7 +308,7 @@ cell_plot <- c('Fibroblast','EC','Pericyte','Neuronal','T cell','Macrophage','B 
 
 setwd('E:\\CQT2026012704-F001_20260313\\CQT2026012704-F001_20260313\\Experiment\\GEO\\Data\\GSE247468')
 #png(filename =  'vlnplot_multiple_genes.png', width = 6, height = 6,units = 'in', res = 300)
-pdf(file =  'vlnplot_multiple_genes.pdf', width = 6.75, height = 5.95)
+pdf(file =  'vlnplot_multiple_genes.pdf', width = 6, height = 8)
 complex_vlnplot_multiple(pbmc, features = feature_plot, celltypes = cell_plot, group = "Status", add.dot=F, font.size = 7)
 dev.off()
 
