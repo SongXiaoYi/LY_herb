@@ -89,7 +89,10 @@ a <- a + stat_compare_means(comparisons = my_comparisons, symnum.args=list(cutpo
                             label = "p.signif")
 a
 
-
+setwd('E:\\CQT2026012704-F001_20260313\\CQT2026012704-F001_20260313\\Experiment\\GEO\\Data\\GSE141910_norm_counts_TPM_GRCh38.p13_NCBI.tsv')
+pdf(file = 'CCNA2_compare.pdf', width = 3.4, height = 3.05)
+a
+dev.off()
 
 
 
