@@ -50,18 +50,20 @@ rownames(pbmc_meta) <- pbmc_meta$Sample
 pbmc <- as.data.frame(pbmc_matrix)
 pbmc <- t(pbmc)
 
-Mki67_matrix <- as.data.frame(pbmc)
-Mki67_matrix <- cbind(rownames(Mki67_matrix), Mki67_matrix$Mki67) %>% as.data.frame()
+Ccna2_matrix <- as.data.frame(pbmc)
+Ccna2_matrix <- cbind(rownames(Ccna2_matrix), Ccna2_matrix$Ccna2) %>% as.data.frame()
+Ccna2_matrix <- Ccna2_matrix[-19,]
+pbmc_meta <- pbmc_meta[-19,]
 
-colnames(Mki67_matrix) <- c('ID','Mki67')
-Mki67_matrix$Group <- pbmc_meta$subtype
-Mki67_matrix$Mki67 <- as.numeric(Mki67_matrix$Mki67)
+colnames(Ccna2_matrix) <- c('ID','Ccna2')
+Ccna2_matrix$Group <- pbmc_meta$subtype
+Ccna2_matrix$Ccna2 <- as.numeric(Ccna2_matrix$Ccna2)
 ################################ Liner
-newdata <- Mki67_matrix
+newdata <- Ccna2_matrix
 ko_color <- c('#3d4144', '#28aae2', '#1fb573', '#800040')
 newdata$Group <- factor(newdata$Group, levels = c('SHAM','TAC','ART','ASIV80'))
 my_comparisons <- list(c("ASIV80", "SHAM"),c("ASIV80", "TAC"),c("ASIV80", "ART"))
-a <- ggboxplot(newdata, x="Group", y="Mki67", fill = "Group",
+a <- ggboxplot(newdata, x="Group", y="Ccna2", fill = "Group",
             ylab="Transcripts Per Million (TMP)",add = "jitter", shape = 16,xlab="",bxp.errorbar = TRUE,outlier.shape = NA)
 a <- a + theme_bw() + rotate_x_text(51) + scale_fill_manual(values = ko_color)
 a <- a + stat_compare_means(comparisons = my_comparisons, symnum.args=list(cutpoints = c(0,0.001,0.01,0.05, 1), symbols = c("***", "**","*", "ns")),
@@ -69,8 +71,8 @@ a <- a + stat_compare_means(comparisons = my_comparisons, symnum.args=list(cutpo
 a
 #a <- a + stat_compare_means() + NoLegend()
 
-setwd('G:\\WuXiang\\Experiment\\LOG')
-pdf(file = 'Mki67_compare.pdf', width = 2.7, height = 2.95)
+setwd('E:\\CQT2026012704-F001_20260313\\CQT2026012704-F001_20260313\\Experiment\\WGCNA')
+pdf(file = 'Ccna2_compare.pdf', width = 4, height = 3.5)
 a
 dev.off()
 
